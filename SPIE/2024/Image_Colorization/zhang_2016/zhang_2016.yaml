@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: color-img-zhang
+  labels:
+    k8s-app: color-img-zhang
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: color-img-zhang
+  template:
+    metadata: 
+      labels:
+        k8s-app: color-img-zhang
+    spec:
+      containers:
+      - name: color-img-zhang-pod
+        image: nvidia/cuda:12.0.1-cudnn8-devel-ubuntu20.04
+        command: ["sleep", "infinity"]
+        resources:
+          limits:
+            nvidia.com/gpu: "1"
+            memory: "16G"
+            cpu: "1"
+            ephemeral-storage: "32Gi"
+          requests:
+             memory: "16G"
+             cpu: "1"
+             ephemeral-storage: "32Gi"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-A10
+                #- Tesla-V100-SXM2-32GB
